@@ -1,6 +1,5 @@
 import FragmentItem from "./item/FragmentItem";
 
-
 function FragmentList({list}) {
     return (
         <div className='flex row'>

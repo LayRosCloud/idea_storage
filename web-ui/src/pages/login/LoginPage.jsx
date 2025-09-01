@@ -3,7 +3,7 @@ import {NavLink} from "react-router-dom";
 
 function LoginPage() {
     return (
-        <div className="login-page">
+        <div className="div-wrapper">
             <div className="auth-form">
                 <h1>Авторизация</h1>
                 <form>

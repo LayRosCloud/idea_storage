@@ -3,7 +3,7 @@ import {NavLink} from "react-router-dom";
 
 function RegisterPage() {
     return (
-        <div>
+        <div className='div-wrapper'>
             <div className="login-page">
                 <div className="auth-form">
                     <h1>Регистрация</h1>

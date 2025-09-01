@@ -22,7 +22,7 @@ function ProjectPage() {
     }, [location.pathname])
 
     return (
-        <div className='flex row stretch-vertical'>
+        <div className='flex row stretch-vertical div-wrapper'>
             <div className='projects'>
                 <button onClick={() => navigate('/projects/handle')}>+ Создать</button>
                 <div className='scroll-container'>

@@ -1,7 +1,6 @@
 
 
 
-
 function FragmentItem({item}) {
     return (
         <div className='flex column fragment'>

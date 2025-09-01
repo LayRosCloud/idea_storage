@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {findById} from "../../../utils/project-repository";
 import ticksToDate from "ticks-to-date";
 import Markdown from "markdown-to-jsx";
+import PopUpWindow from "../../../components/pop-up/PopUpWindow";
 
 
 function ProjectInformation() {
@@ -50,9 +51,6 @@ function ProjectInformation() {
                 <Markdown>{project.fullDescription}</Markdown>
             </div>
         </div>
-
-
-
     </div>
 }
 

@@ -1,4 +1,3 @@
-import {useParams} from "react-router-dom";
 import TaskList from "../../../components/list/task/TaskList";
 
 const data = [
@@ -28,8 +27,6 @@ const data = [
 
 
 function TaskPage() {
-    const {id} = useParams();
-
     return(
         <div>
             <TaskList list={data}/>

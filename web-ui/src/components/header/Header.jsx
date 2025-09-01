@@ -1,14 +1,19 @@
 import ProfileButton from "../buttons/ProfileButton";
-import {NavLink} from "react-router-dom";
+import styles from './Header.module.css'
 
 function Header() {
     return (
         <header>
-            <NavLink className='logo-text' to='/'>
-                ProtoBin
-            </NavLink>
-            <div>
-                <ProfileButton/>
+            <div className='container'>
+                <nav>
+                    <div className={styles.logo}>Proto<span>bin</span></div>
+                    <ul className={styles.nav_links}>
+                        <li><a href="#features">Возможности</a></li>
+                        <li><a href="#how-it-works">Как работает</a></li>
+                        <li><a href="#testimonials">Отзывы</a></li>
+                        <li><ProfileButton/></li>
+                    </ul>
+                </nav>
             </div>
         </header>
     )

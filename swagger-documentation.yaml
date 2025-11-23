@@ -1,0 +1,1382 @@
+openapi: 3.0.0
+info:
+  title: Protobin API
+  version: 1.0.0
+  description: |
+    ### Общая документация API для всех сервисов Protobin
+    
+    Это модуль для работы с проектами, здесь вы можете получить:
+    - теги
+    - стек
+    - проекты
+    - участников проекта
+    - права участников
+    - фрагменты
+    - элементы доски
+    - пользователей
+    - авторизацию
+    и т.д.
+  contact:
+    name: API Support
+    url: https://protobin.com
+    email: vogistv@gmail.com
+  license:
+    name: Proprietary
+    url: https://protobin.com
+  termsOfService: https://protobin.com
+
+servers:
+  - url: http://localhost:8080
+    description: Локальная среда
+  - url: https://api.protobin.com
+    description: Продакшн
+
+tags:
+  - name: Projects
+    description: Необходимые руты для работы с проектами
+  - name: Fragments
+    description: Необходимые руты для работы с фрагментами
+  - name: Tags
+    description: Необходимые руты для работы с тэгами
+  - name: Board elements
+    description: Необходимые руты для работы с элементами доски
+  - name: Users
+    description: Необходимые руты для работы с пользователями
+  - name: Health
+    description: Проверка работы сервера
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Authorization header using the Bearer scheme
+
+  schemas:
+    ResponseDto:
+      type: object
+      title: Ответ
+      description: Стандартизированный ответ от API
+      properties:
+        status:
+          type: integer
+          title: Статус
+          description: Статус ответа
+          example: 200
+        message:
+          type: string
+          title: Сообщение
+          description: Сообщение ответа
+          example: "Какой-либо ответ"
+
+    ErrorDto:
+      type: object
+      properties:
+        status:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+
+    ProjectResponseDto:
+      type: object
+      title: Проект
+      description: Поля которые отдаются
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор пользователя
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        title:
+          type: string
+          description: Заголовок
+          example: "VoiceTok"
+        concept:
+          type: string
+          description: Краткое описание идеи
+          example: "Приложение для разговора с котятами"
+        description:
+          type: string
+          description: Подробное описание идеи
+          example: "Приложение где ваш кот будет управлять вами полностью согласуя ваши задачи, к примеру... и т.д."
+        visibleStatus:
+          type: string
+          enum: [VISIBLE, HIDDEN]
+          description: Статус видимости проекта
+          example: "VISIBLE"
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponseDto'
+
+    ProjectCreateDto:
+      type: object
+      title: Создание проекта
+      description: Объект для создания проекта
+      required:
+        - title
+        - concept
+        - description
+        - visibleStatus
+      properties:
+        title:
+          type: string
+          description: Заголовок
+          example: "VoiceTok"
+        concept:
+          type: string
+          description: Краткое описание идеи
+          example: "Приложение для разговора с котятами"
+        description:
+          type: string
+          description: Подробное описание идеи
+          example: "Приложение где ваш кот будет управлять вами полностью согласуя ваши задачи, к примеру... и т.д."
+        visibleStatus:
+          type: string
+          enum: [VISIBLE, HIDDEN]
+          description: Статус видимости проекта
+          example: "VISIBLE"
+
+    ProjectUpdateDto:
+      type: object
+      title: Обновление проекта
+      description: Поля необходимые для обновления проекта
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор пользователя
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        title:
+          type: string
+          description: Заголовок
+          example: "VoiceTok"
+        concept:
+          type: string
+          description: Краткое описание идеи
+          example: "Приложение для разговора с котятами"
+        description:
+          type: string
+          description: Подробное описание идеи
+          example: "Приложение где ваш кот будет управлять вами полностью согласуя ваши задачи, к примеру... и т.д."
+        visibleStatus:
+          type: string
+          enum: [VISIBLE, HIDDEN]
+          description: Статус видимости проекта
+          example: "VISIBLE"
+
+    FragmentResponseDto:
+      type: object
+      title: Фрагмент
+      description: Поля получаемые с фрагмента
+      required:
+        - id
+        - title
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор фрагмента
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+        title:
+          type: string
+          description: Название фрагмента
+          example: "Авторизация"
+        shortDescription:
+          type: string
+          description: Краткое содержание фрагмента
+          example: "JWT-токены, логин, пароль, хеширование"
+        description:
+          type: string
+          description: Полное описание фрагмента
+          example: "На странице авторизации должны находиться логин..."
+        image:
+          type: string
+          description: Изображение для фрагмента
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc.jpg"
+        userId:
+          type: string
+          format: uuid
+          description: Идентификатор человека, который отвечает за фрагмент
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+        createdAt:
+          type: integer
+          format: int64
+          description: Дата создания фрагмента
+          example: 1762672272
+        updatedAt:
+          type: integer
+          format: int64
+          description: Дата обновления фрагмента
+          example: 1762672272
+
+    FragmentCreateDto:
+      type: object
+      title: Создание фрагмента
+      description: Поля необходимые для создания
+      required:
+        - projectId
+        - title
+      properties:
+        projectId:
+          type: string
+          format: uuid
+          description: Идентификатор проекта
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+        title:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Название фрагмента
+          example: "Авторизация"
+        shortDescription:
+          type: string
+          maxLength: 500
+          description: Краткое содержание фрагмента
+          example: "JWT-токены, логин, пароль, хеширование"
+        description:
+          type: string
+          maxLength: 10000
+          description: Полное описание фрагмента
+          example: "На странице авторизации должны находиться логин..."
+        image:
+          type: string
+          format: binary
+          description: Изображение фрагмента
+
+    FragmentUpdateDto:
+      type: object
+      title: Обновление фрагмента
+      description: Поля необходимые для обновления
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Название фрагмента
+          example: "Авторизация"
+        shortDescription:
+          type: string
+          maxLength: 500
+          description: Краткое содержание фрагмента
+          example: "JWT-токены, логин, пароль, хеширование"
+        description:
+          type: string
+          maxLength: 10000
+          description: Полное описание фрагмента
+          example: "На странице авторизации должны находиться логин..."
+        userId:
+          type: string
+          format: uuid
+          description: Идентификатор человека, который отвечает за фрагмент
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+
+    FragmentUpdateImageDto:
+      type: object
+      title: Обновление изображения фрагмента
+      description: Поля необходимые для обновления изображения
+      required:
+        - image
+      properties:
+        image:
+          type: string
+          format: binary
+          description: Изображение
+
+    TagResponseDto:
+      type: object
+      title: Тэг
+      description: Поля получаемые с тэга
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор тэга
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+        name:
+          type: string
+          description: Значение тэга
+          example: "tag"
+
+    TagCreateAllDto:
+      type: object
+      title: Создание тэгов
+      description: Поля необходимые для создания
+      required:
+        - names
+        - projectId
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+          description: Список тэгов
+        projectId:
+          type: string
+          format: uuid
+          description: Идентификатор проекта
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+
+    BoardElementResponseDto:
+      type: object
+      title: Элемент доски
+      description: Данные об элементе доски
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор элемента
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+        type:
+          type: string
+          enum: [FRAGMENT, OTHER]
+          description: Тип элемента
+          example: "FRAGMENT"
+        coordinateX:
+          type: number
+          format: float
+          description: Координата x элемента
+          example: 15
+        coordinateY:
+          type: number
+          format: float
+          description: Координата y элемента
+          example: 15
+        entityId:
+          type: string
+          description: Id элемента на доске
+          example: "some value"
+        payload:
+          type: object
+          description: Полезная информация элемента
+          example: {}
+        createdAt:
+          type: integer
+          format: int64
+          description: Дата создания элемента в миллисекундах
+          example: 1763038915404
+        updatedAt:
+          type: integer
+          format: int64
+          description: Дата обновления элемента в миллисекундах
+          example: 1763038915404
+
+    BoardElementCreateDto:
+      type: object
+      title: Создание элемента доски
+      description: Поля необходимые для создания
+      required:
+        - projectId
+        - type
+        - coordinateX
+        - coordinateY
+        - entityId
+        - payload
+      properties:
+        projectId:
+          type: string
+          format: uuid
+          description: Идентификатор проекта
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+        type:
+          type: string
+          enum: [FRAGMENT, OTHER]
+          description: Тип элемента
+          example: "FRAGMENT"
+        coordinateX:
+          type: number
+          format: float
+          description: Координата x элемента
+          example: 15
+        coordinateY:
+          type: number
+          format: float
+          description: Координата y элемента
+          example: 15
+        entityId:
+          type: string
+          description: Id элемента на доске
+          example: "some value"
+        payload:
+          type: object
+          description: Полезная информация элемента
+          example: {}
+
+    BoardElementUpdateDto:
+      type: object
+      title: Обновление элемента доски
+      description: Поля необходимые для обновления
+      required:
+        - id
+        - coordinateX
+        - coordinateY
+        - payload
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор элемента
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+        coordinateX:
+          type: number
+          format: float
+          description: Координата x элемента
+          example: 15
+        coordinateY:
+          type: number
+          format: float
+          description: Координата y элемента
+          example: 15
+        payload:
+          type: object
+          description: Полезная информация элемента
+          example: {}
+
+    UserResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID пользователя
+        email:
+          type: string
+          description: Почта пользователя
+          example: "john.doe@example.com"
+        username:
+          type: string
+          description: Логин пользователя
+          example: "starleken"
+
+    UserSignupDto:
+      type: object
+      required:
+        - email
+        - username
+        - password
+      properties:
+        email:
+          type: string
+          description: Почта пользователя для регистрации
+          example: "john.doe@example.com"
+        username:
+          type: string
+          description: Логин пользователя для регистрации
+          example: "starleken"
+        password:
+          type: string
+          description: Пароль пользователя для регистрации
+          example: "Currentpassword154"
+
+    LoginRequestDto:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          description: Почта пользователя для авторизации
+          example: "john.doe@example.com"
+        password:
+          type: string
+          description: Текущий пароль пользователя
+          example: "Currentpassword154"
+
+    LoginResponseDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+          description: UUID пользователя, прошедшего авторизацию
+        accessToken:
+          type: string
+          description: Выданный access токен
+
+    RefreshTokenRequestDto:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: refresh токен пользователя
+
+    RefreshTokenResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: Обновлённый access токен пользователя
+
+    ChangePasswordDto:
+      type: object
+      required:
+        - id
+        - oldPassword
+        - newPassword
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID пользователя
+        oldPassword:
+          type: string
+          description: Текущий пароль пользователя
+          example: "Currentpassword154"
+        newPassword:
+          type: string
+          description: Новый пароль пользователя
+          example: "Newpassword152"
+
+    ChangeEmailDto:
+      type: object
+      required:
+        - id
+        - newEmail
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID пользователя
+        newEmail:
+          type: string
+          description: Новая почта пользователя
+          example: "john.doe@example.com"
+
+    LogoutRequestDto:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh токен для удаления
+
+  responses:
+    BadRequest:
+      description: Неправильное тело запроса
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseDto'
+
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseDto'
+
+    Forbidden:
+      description: Недостаточно прав
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseDto'
+
+    NotFound:
+      description: Ресурс был не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseDto'
+
+paths:
+  /v1/health:
+    get:
+      tags:
+        - Health
+      summary: Получить состояние сервера
+      description: Если приходит ответ, значит API в исправном состоянии
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Состояние сервера в исправном состоянии
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '401':
+          description: Не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+
+  /v1/projects:
+    get:
+      tags:
+        - Projects
+      summary: Получить проекты по тэгам
+      description: Получить все проекты, включающие указанные тэги
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Количество элементов на странице
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 10
+        - name: page
+          in: query
+          description: Номер страницы
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Были получены проекты
+          headers:
+            X-Total-Count:
+              description: Общее количество элементов
+              schema:
+                type: integer
+            X-Limit:
+              description: Количество элементов на странице
+              schema:
+                type: integer
+            X-Page:
+              description: Номер страницы
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    post:
+      tags:
+        - Projects
+      summary: Создать проект
+      description: Создается новый проект для текущего пользователя
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreateDto'
+      responses:
+        '201':
+          description: Был создан проект
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      tags:
+        - Projects
+      summary: Обновить данные о проекте
+      description: Обновляются данные о выбранном проекте
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdateDto'
+      responses:
+        '200':
+          description: Был обновлен проект
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/projects/{id}:
+    get:
+      tags:
+        - Projects
+      summary: Получить проект по UUID
+      description: Получить проект по его идентификатору
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор проекта
+      responses:
+        '200':
+          description: Был получен проект
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponseDto'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Projects
+      summary: Удалить проект
+      description: Удаляется проект через soft, то есть можно восстановить
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор проекта
+      responses:
+        '204':
+          description: Был удален проект
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/projects/{projectId}/fragments:
+    get:
+      tags:
+        - Projects
+        - Fragments
+      summary: Получить фрагменты по UUID
+      description: Получить все фрагменты с **пагинацией**
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор проекта
+        - name: limit
+          in: query
+          description: Количество элементов на странице
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 10
+        - name: page
+          in: query
+          description: Номер страницы
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Были получены фрагменты
+          headers:
+            X-Total-Count:
+              description: Общее количество элементов
+              schema:
+                type: integer
+            X-Limit:
+              description: Количество элементов на странице
+              schema:
+                type: integer
+            X-Page:
+              description: Номер страницы
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FragmentResponseDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/fragments:
+    post:
+      tags:
+        - Fragments
+      summary: Создать фрагмент
+      description: Был создан новый фрагмент для проекта
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FragmentCreateDto'
+      responses:
+        '201':
+          description: Создан новый фрагмент
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FragmentResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/fragments/{id}:
+    get:
+      tags:
+        - Fragments
+      summary: Получить фрагмент по UUID
+      description: Получить фрагмент по id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор фрагмента
+      responses:
+        '200':
+          description: Был получен фрагмент
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FragmentResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Fragments
+      summary: Обновить фрагмент
+      description: Был обновлен фрагмент
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор фрагмента
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FragmentUpdateDto'
+      responses:
+        '200':
+          description: Обновлен определенный фрагмент
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FragmentResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Fragments
+      summary: Удалить фрагмент
+      description: Удаляет фрагмент без возможности восстановления
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор фрагмента
+      responses:
+        '204':
+          description: Удален фрагмент
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/fragments/{id}/image:
+    patch:
+      tags:
+        - Fragments
+      summary: Обновить фрагмент фото
+      description: Был обновлен фрагмент фото
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор фрагмента
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FragmentUpdateImageDto'
+      responses:
+        '200':
+          description: Обновлен определенный фрагмент фото
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FragmentResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Fragments
+      summary: Удалить фрагмент фото
+      description: Удаляет фото у фрагмента без возможности восстановления
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор фрагмента
+      responses:
+        '200':
+          description: Удалено фото у фрагмента
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FragmentResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/tags:
+    post:
+      tags:
+        - Tags
+      summary: Создать список тэгов
+      description: Создается список тэгов для указанного проекта
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagCreateAllDto'
+      responses:
+        '201':
+          description: Тэги созданы
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TagResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/tags/{id}:
+    delete:
+      tags:
+        - Tags
+      summary: Удалить тэг
+      description: Удаляется тэг
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор тэга
+      responses:
+        '204':
+          description: Был удален тэг
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/board/elements/project/{projectId}:
+    get:
+      tags:
+        - Board elements
+      summary: Получить список элементов по UUID проекта
+      description: Получить список элементов
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор проекта
+      responses:
+        '200':
+          description: Список элементов доски проекта успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BoardElementResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Получить пользователя по UUID
+      description: Возвращает пользователя по UUID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор пользователя
+      responses:
+        '200':
+          description: Пользователь успешно возвращён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
+        '403':
+          description: Отсутствует или неверный токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '404':
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+
+    delete:
+      tags:
+        - Users
+      summary: Удаление пользователя
+      description: Удаляет пользователя из системы
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор пользователя
+      responses:
+        '200':
+          description: Пользователь успешно удалён
+        '403':
+          description: Отсутствует или неверный токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '404':
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+
+  /v1/users/signup:
+    post:
+      tags:
+        - Users
+      summary: Регистрация пользователя
+      description: Регистрирует пользователя в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignupDto'
+      responses:
+        '201':
+          description: Пользователь успешно зарегистрирован
+        '400':
+          description: Почта или логин уже заняты
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+
+  /v1/users/login:
+    post:
+      tags:
+        - Users
+      summary: Авторизация пользователя
+      description: Возвращает токены пользователю. Refresh токен возвращается в Cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDto'
+      responses:
+        '200':
+          description: Пользователь успешно авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDto'
+        '400':
+          description: Неверный пароль
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '404':
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+
+  /v1/users/tokens/refresh:
+    post:
+      tags:
+        - Users
+      summary: Обновление токенов
+      description: Возвращает новую пару токенов пользователю. Refresh токен возвращается в Cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequestDto'
+      responses:
+        '200':
+          description: Токены успешно обновлены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponseDto'
+        '403':
+          description: Неверный токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '404':
+          description: Токен не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+
+  /v1/users/password:
+    put:
+      tags:
+        - Users
+      summary: Смена пароля пользователя
+      description: Меняет пароль пользователя на новый
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordDto'
+      responses:
+        '200':
+          description: Пароль успешно изменён
+        '400':
+          description: Старый пароль не совпадает
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '403':
+          description: Отсутствует или неверный токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '404':
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+
+  /v1/users/email:
+    put:
+      tags:
+        - Users
+      summary: Смена почты пользователя
+      description: Меняет почту пользователя на новую
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeEmailDto'
+      responses:
+        '200':
+          description: Почта успешно изменена
+        '400':
+          description: Почта уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '403':
+          description: Отсутствует или неверный токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '404':
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+
+  /v1/users/logout:
+    post:
+      tags:
+        - Users
+      summary: Выход пользователя из системы
+      description: Удаляет токен пользователя
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequestDto'
+      responses:
+        '200':
+          description: Выход пользователя успешно произведён
+        '403':
+          description: Отсутствует или неверный токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+        '404':
+          description: Токен не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+

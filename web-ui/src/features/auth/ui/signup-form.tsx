@@ -4,7 +4,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/shared/ui/kit/form";
 import { Input } from "@/shared/ui/kit/input";
@@ -15,6 +14,7 @@ import { useSignup } from "../model/use-signup";
 
 const signupSchema = z
   .object({
+    username: z.string("Имя пользователя имеет неправильный формат"),
     email: z.email("Email имеет неправильный формат"),
     password: z
       .string({
@@ -43,12 +43,23 @@ export function SignupForm() {
       <form className="flex flex-col gap-4" onSubmit={onSubmit}>
         <FormField
           control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type="text" placeholder="имя пользователя" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="user@gmail.com" {...field} />
+                <Input type="email" placeholder="почта" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -59,9 +70,8 @@ export function SignupForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Пароль</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="*********" {...field} />
+                <Input type="password" placeholder="пароль" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -72,16 +82,15 @@ export function SignupForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Повторите пароль</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="*********" {...field} />
+                <Input type="password" placeholder="повторите пароль" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         {errorMessage && <p className="text-destructive">{errorMessage}</p>}
-        <Button disabled={isPending} type="submit">
+        <Button variant="primary" disabled={isPending} type="submit">
           Зарегистрироваться
         </Button>
       </form>

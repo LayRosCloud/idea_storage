@@ -1,4 +1,4 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { App } from "./app";
 import { Routes } from "@/shared/model/routes";
 import { Providers } from "./providers";
@@ -41,8 +41,20 @@ export const router = createBrowserRouter([
         lazy: () => import("@/features/auth/signup.page"),
       },
       {
+        path: Routes.VERIFY_EMAIL,
+        lazy: () => import("@/features/auth/verify.page"),
+      },
+      {
+        path: Routes.FORGOT_PASSWORD,
+        lazy: () => import("@/features/auth/forgot-password.page"),
+      },
+      {
+        path: Routes.RESTORE_PASSWORD,
+        lazy: () => import("@/features/auth/restore-password.page"),
+      },
+      {
         path: Routes.HOME,
-        loader: () => redirect(Routes.BOARDS),
+        lazy: () => import("@/features/home/home.page"),
       },
     ],
   },

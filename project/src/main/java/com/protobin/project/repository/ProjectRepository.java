@@ -21,22 +21,18 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, UUID> {
             from projects p
             join tags t on t.project_id = p.id
             where lower(t.name) in :tags
+            and p.deleted_at IS NULL
             group by p.id
-            having count(distinct lower(t.name)) = :tagsCount
+            order by count(distinct lower(t.name)) desc
             """,
             countQuery = """
-            select count(*)
-            from (
-                select p.id
-                from projects p
-                join tags t on t.project_id = p.id
-                where lower(t.name) in :tags
-                group by p.id
-                having count(distinct lower(t.name)) = :tagsCount
-            ) q
+            select count(distinct p.id)
+            from projects p
+            join tags t on t.project_id = p.id
+            where lower(t.name) in :tags
+            and p.deleted_at IS NULL
             """,
             nativeQuery = true)
     Page<ProjectEntity> findAllByTagsIgnoreCase(@Param("tags") Collection<String> tags,
-                                                @Param("tagsCount") long tagsCount,
                                                 Pageable pageable);
 }

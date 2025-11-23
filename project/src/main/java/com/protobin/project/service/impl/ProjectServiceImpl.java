@@ -37,8 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public PaginationResponse<ProjectResponseDto> findAllByTags(List<String> tagsNames, PaginationParams pagination) {
-        var sort = Sort.by("id").ascending();
-        var pageable = PageRequest.of(pagination.page(), pagination.limit(), sort);
+        var pageable = PageRequest.of(pagination.page(), pagination.limit());
 
         if (tagsNames == null || tagsNames.isEmpty()) {
             return getPaginationResponse(pageable);
@@ -53,7 +52,7 @@ public class ProjectServiceImpl implements ProjectService {
             return getPaginationResponse(pageable);
         }
 
-        var filtered = projectRepository.findAllByTagsIgnoreCase(normalized, normalized.size(), pageable);
+        var filtered = projectRepository.findAllByTagsIgnoreCase(normalized, pageable);
         return new PaginationResponse<>(filtered.map(projectMapper::mapToDto).getContent(), filtered.getTotalElements());
     }
 

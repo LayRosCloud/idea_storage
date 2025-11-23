@@ -10,9 +10,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode
 @EntityListeners({TimestampListener.class})
+@SQLRestriction("deleted_at IS NULL")
 public class ProjectEntity implements CreatedAtTimestampAware, UpdateAtTimestampAware {
 
     @Id
@@ -61,4 +61,9 @@ public class ProjectEntity implements CreatedAtTimestampAware, UpdateAtTimestamp
     @ToString.Exclude
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<BoardElementEntity> boardElements = new ArrayList<>();
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<TagEntity> tags = new ArrayList<>();
 }

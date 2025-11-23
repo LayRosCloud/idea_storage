@@ -4,7 +4,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/shared/ui/kit/form";
 import { Input } from "@/shared/ui/kit/input";
@@ -12,6 +11,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLogin } from "../model/use-login";
+import { Link } from "react-router-dom";
+import { Routes } from "@/shared/model/routes";
 
 const loginSchema = z.object({
   email: z.email("Email имеет неправильный формат"),
@@ -26,6 +27,7 @@ export function LoginForm() {
   const form = useForm({
     resolver: zodResolver(loginSchema),
   });
+  form.control.getFieldState('email')
   const { login, isPending, errorMessage } = useLogin();
 
   const onSubmit = form.handleSubmit(login);
@@ -38,9 +40,12 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="user@gmail.com" {...field} />
+                <Input
+                  type="text"
+                  placeholder="имя пользователя или почта"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -51,16 +56,21 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Пароль</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="*********" {...field} />
+                <Input type="password" placeholder="пароль" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <Link
+          to={Routes.FORGOT_PASSWORD + `?email=${encodeURIComponent(form.watch("email") ?? '')}`}
+          className="underline text-blue-500 text-sm/6 ml-auto mr-0"
+        >
+          Забыли пароль?
+        </Link>
         {errorMessage && <p className="text-destructive">{errorMessage}</p>}
-        <Button disabled={isPending} type="submit">
+        <Button variant="primary" disabled={isPending} type="submit">
           Авторизоваться
         </Button>
       </form>

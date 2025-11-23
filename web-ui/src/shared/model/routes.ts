@@ -2,8 +2,11 @@ import "react-router-dom";
 
 export const Routes = {
   HOME: "/",
-  LOGIN: "/login",
+  LOGIN: "/signin",
   REGISTER: "/signup",
+  VERIFY_EMAIL: "/signup/verify",
+  FORGOT_PASSWORD: "/signin/forgot-password",
+  RESTORE_PASSWORD: "/signin/restore-password",
   BOARDS: "/boards",
   BOARD: "/board/:boardId",
 } as const;

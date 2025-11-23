@@ -2,16 +2,17 @@ import { AuthLayout } from "./ui/auth-layout";
 import { Link } from "react-router-dom";
 import { Routes } from "@/shared/model/routes";
 import { SignupForm } from "./ui/signup-form";
+import { SocialAuthService } from "./ui/social-auth-service";
 
 export function SignupPage() {
   return (
     <AuthLayout
-      title="Зарегистрироваться в системе"
-      description="Введите ваш email и пароль для регистрации в системе"
+      title="Регистрация"
       form={<SignupForm />}
+      footerSocial={<SocialAuthService />}
       footerText={
         <>
-          Есть аккаунт? <Link to={Routes.LOGIN}>Авторизоваться</Link>
+          Уже есть аккаунт на Protobin? <Link to={Routes.LOGIN}>Войти</Link>
         </>
       }
     />

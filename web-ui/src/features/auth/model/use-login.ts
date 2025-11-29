@@ -10,7 +10,7 @@ export function useLogin() {
   const loginMutation = publicRqClient.useMutation("post", "/auth/login", {
     onSuccess(data) {
       session.login(data.accessToken);
-      navigate(Routes.BOARDS);
+      navigate(Routes.HOME);
     },
   });
 

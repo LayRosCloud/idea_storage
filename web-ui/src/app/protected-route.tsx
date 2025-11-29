@@ -21,3 +21,7 @@ export async function protectedLoader() {
 
   return null;
 }
+
+export function PublicRoute() {
+  return <Outlet />;
+}

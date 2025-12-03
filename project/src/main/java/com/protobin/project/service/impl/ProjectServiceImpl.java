@@ -3,6 +3,7 @@ package com.protobin.project.service.impl;
 import com.protobin.project.dto.project.ProjectCreateDto;
 import com.protobin.project.dto.project.ProjectResponseDto;
 import com.protobin.project.dto.project.ProjectUpdateDto;
+import com.protobin.project.dto.project.ProjectsSearchDto;
 import com.protobin.project.entity.ProjectEntity;
 import com.protobin.project.exception.NotFoundException;
 import com.protobin.project.helper.PaginationParams;
@@ -36,23 +37,31 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public PaginationResponse<ProjectResponseDto> findAllByTags(List<String> tagsNames, PaginationParams pagination) {
+    public PaginationResponse<ProjectResponseDto> findAllByTagsAndStack(ProjectsSearchDto searchDto, PaginationParams pagination) {
         var pageable = PageRequest.of(pagination.page(), pagination.limit());
 
-        if (tagsNames == null || tagsNames.isEmpty()) {
+        var tagsNames = searchDto.getTagNames();
+        var stackNames = searchDto.getStackNames();
+
+        if (tagsNames.isEmpty() && stackNames.isEmpty()) {
             return getPaginationResponse(pageable);
         }
 
-        var normalized = tagsNames.stream()
+        var normalizedTags = tagsNames.stream()
                 .filter(Objects::nonNull)
                 .map(name -> name.toLowerCase(Locale.ROOT))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        if (normalized.isEmpty()) {
+        var normalizedStacks = stackNames.stream()
+                .filter(Objects::nonNull)
+                .map(name -> name.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        if (normalizedTags.isEmpty() && normalizedStacks.isEmpty()) {
             return getPaginationResponse(pageable);
         }
 
-        var filtered = projectRepository.findAllByTagsIgnoreCase(normalized, pageable);
+        var filtered = projectRepository.findAllByTagsAndStacksIgnoreCase(normalizedTags, normalizedStacks, pageable);
         return new PaginationResponse<>(filtered.map(projectMapper::mapToDto).getContent(), filtered.getTotalElements());
     }
 

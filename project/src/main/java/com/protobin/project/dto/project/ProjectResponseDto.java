@@ -1,5 +1,6 @@
 package com.protobin.project.dto.project;
 
+import com.protobin.project.dto.stackTechnology.StackTechnologyResponseDto;
 import com.protobin.project.dto.tag.TagResponseDto;
 import com.protobin.project.entity.enums.ProjectVisibleStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,5 +32,9 @@ public class ProjectResponseDto {
             example = "VISIBLE")
     private ProjectVisibleStatus visibleStatus;
 
+    @Schema(description = "Тэги проекта")
     private List<TagResponseDto> tags;
+
+    @Schema(description = "Стэк проекта")
+    private List<StackTechnologyResponseDto> stackTechnologies;
 }

@@ -1,12 +1,12 @@
 package com.protobin.project.controller;
 
-import com.protobin.project.dto.tag.TagCreateAllDto;
-import com.protobin.project.dto.tag.TagResponseDto;
+import com.protobin.project.dto.stackTechnology.StackTechnologyAllCreateDto;
+import com.protobin.project.dto.stackTechnology.StackTechnologyResponseDto;
 import com.protobin.project.exception.annotation.ApiResponseBadRequest;
 import com.protobin.project.exception.annotation.ApiResponseForbidden;
 import com.protobin.project.exception.annotation.ApiResponseNoAuth;
 import com.protobin.project.exception.annotation.ApiResponseNotFound;
-import com.protobin.project.service.TagService;
+import com.protobin.project.service.StackTechnologyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,41 +21,41 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "v1/tags")
-@Tag(name = "Tags", description = "Необходимые руты для работы с тэгами")
-public class TagController {
+@RequestMapping(path = "v1/stack")
+@Tag(name = "Стэк", description = "Необходимые руты для работы со стэком проекта")
+public class StackTechnologyController {
 
-    private final TagService tagService;
+    private final StackTechnologyService stackTechnologyService;
 
     @PostMapping
     @Operation(
-            summary = "Создать список тэгов",
-            description = "Создается список тэгов для указанного проекта",
+            summary = "Создать список технологий стэка",
+            description = "Создается список технологий для указанного проекта",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @ApiResponse(responseCode = "201", description = "Тэги созданы" )
+    @ApiResponse(responseCode = "201", description = "Стэк создан" )
     @ApiResponseNotFound
     @ApiResponseBadRequest
     @ApiResponseForbidden
     @ApiResponseNoAuth
-    public ResponseEntity<List<TagResponseDto>> create(@RequestBody TagCreateAllDto createAllDto) {
-        var created = tagService.createAll(createAllDto);
+    public ResponseEntity<List<StackTechnologyResponseDto>> create(@RequestBody StackTechnologyAllCreateDto createAllDto) {
+        var created = stackTechnologyService.createAll(createAllDto);
 
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     @Operation(
-            summary = "Удалить тэг",
-            description = "Удаляется тэг",
+            summary = "Удалить технологию стэка",
+            description = "Удаляется технология стэка",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @ApiResponse(responseCode = "204", description = "Был удален тэг")
+    @ApiResponse(responseCode = "204", description = "Была удалена технология стека")
     @ApiResponseNoAuth
     @ApiResponseForbidden
     @ApiResponseNotFound
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
-        tagService.deleteById(id);
+        stackTechnologyService.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

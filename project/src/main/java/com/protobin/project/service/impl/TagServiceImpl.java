@@ -9,11 +9,14 @@ import com.protobin.project.repository.ProjectRepository;
 import com.protobin.project.repository.TagRepository;
 import com.protobin.project.service.ProjectService;
 import com.protobin.project.service.TagService;
+import com.protobin.project.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static com.protobin.project.utils.ListUtils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +33,7 @@ public class TagServiceImpl implements TagService {
         var foundProject = projectRepository.findById(createDto.getProjectId())
                 .orElseThrow(() -> new NotFoundException("Project is not found"));
 
-        var tagNames = removeDuplicates(createDto.getNames());
+        var tagNames = removeDuplicatesIgnoreCase(createDto.getNames());
 
         List<TagEntity> toSave = new ArrayList<>();
         for (var tagName: tagNames) {
@@ -51,19 +54,5 @@ public class TagServiceImpl implements TagService {
                 .orElseThrow(() -> new NotFoundException("Tag is not found"));
 
         tagRepository.deleteById(found.getId());
-    }
-
-    private List<String> removeDuplicates(List<String> list) {
-        Set<String> lowerCaseSet = new LinkedHashSet<>();
-        List<String> result = new ArrayList<>();
-
-        for (String s : list) {
-            String lower = s.toLowerCase();
-            if (!lowerCaseSet.contains(lower)) {
-                lowerCaseSet.add(lower);
-                result.add(s);
-            }
-        }
-        return result;
     }
 }

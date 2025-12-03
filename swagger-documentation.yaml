@@ -38,6 +38,8 @@ tags:
     description: Необходимые руты для работы с фрагментами
   - name: Tags
     description: Необходимые руты для работы с тэгами
+  - name: Stack Technologies
+    description: Необходимые руты для работы со стэком технологий проекта
   - name: Board elements
     description: Необходимые руты для работы с элементами доски
   - name: Users
@@ -318,6 +320,40 @@ components:
           items:
             type: string
           description: Список тэгов
+        projectId:
+          type: string
+          format: uuid
+          description: Идентификатор проекта
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+
+    StackTechnologyResponseDto:
+      type: object
+      title: Технология стэка
+      description: Поля получаемые с технологии стэка
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор технологии
+          example: "3d5f1a26-c554-4bfe-811a-0e9ef2ed52fc"
+        name:
+          type: string
+          description: Название технологии
+          example: "java"
+
+    StackTechnologyCreateAllDto:
+      type: object
+      title: Создание технологии стэка
+      description: Поля необходимые для создания
+      required:
+        - names
+        - projectId
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+          description: Список названий технологий
         projectId:
           type: string
           format: uuid
@@ -1084,6 +1120,64 @@ paths:
       responses:
         '204':
           description: Был удален тэг
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  /v1/stack:
+    post:
+      tags:
+        - Stack Technologies
+      summary: Создать список технологий стэка
+      description: Создается список технологий для указанного проекта
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StackTechnologyCreateDto'
+      responses:
+        '201':
+          description: Тэги созданы
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StackTechnologyResponseDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/stack/{id}:
+    delete:
+      tags:
+        - Stack Technologies
+      summary: Удалить технологию стэка
+      description: Удаляется технология стэка
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор технологии стэка
+      responses:
+        '204':
+          description: Была удалена технология стэка
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':

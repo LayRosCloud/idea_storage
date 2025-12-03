@@ -4,6 +4,7 @@ import com.protobin.project.dto.fragment.FragmentResponseDto;
 import com.protobin.project.dto.project.ProjectCreateDto;
 import com.protobin.project.dto.project.ProjectResponseDto;
 import com.protobin.project.dto.project.ProjectUpdateDto;
+import com.protobin.project.dto.project.ProjectsSearchDto;
 import com.protobin.project.exception.annotation.ApiResponseBadRequest;
 import com.protobin.project.exception.annotation.ApiResponseForbidden;
 import com.protobin.project.exception.annotation.ApiResponseNoAuth;
@@ -61,22 +62,22 @@ public class ProjectController {
                 .body(found.items());
     }
 
-    @GetMapping("/tags")
+    @PostMapping("/search")
     @Operation(
-            summary = "Получить проекты по тэгам",
-            description = "Получить все проекты, включающие указанные тэги",
+            summary = "Поиск проектов по тэгам и стэку",
+            description = "Получить все проекты, включающие указанные тэги и стэк",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponse(responseCode = "200", description = "Были получены проекты" )
     @ApiResponseNoAuth
     @ApiResponseForbidden
     @ApiResponseNotFound
-    public ResponseEntity<List<ProjectResponseDto>> findAllByTags(
-            @RequestBody List<String> tagsName,
+    public ResponseEntity<List<ProjectResponseDto>> findAllByTagsAndStack(
+            @RequestBody ProjectsSearchDto projectsSearchDto,
             @RequestParam(name = PaginationConstants.LIMIT, defaultValue = "10") @Min(0) Integer limit,
             @RequestParam(name = PaginationConstants.PAGE, defaultValue = "0") @Min(0) Integer page) {
         var pagination = new PaginationParams(limit, page);
-        var found = projectService.findAllByTags(tagsName, pagination);
+        var found = projectService.findAllByTagsAndStack(projectsSearchDto, pagination);
 
         return ResponseEntity.ok()
                 .header(PaginationConstants.HEADER_TOTAL_COUNT, found.total().toString())

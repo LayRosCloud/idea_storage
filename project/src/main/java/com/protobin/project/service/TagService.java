@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface TagService {
 
-    List<TagResponseDto> createAll(TagCreateAllDto createDtos);
+    List<TagResponseDto> createAll(TagCreateAllDto createDto);
 
     void deleteById(UUID id);
 }

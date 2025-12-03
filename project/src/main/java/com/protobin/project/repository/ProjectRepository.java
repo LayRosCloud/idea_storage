@@ -17,22 +17,22 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, UUID> {
 
     @Query(
             value = """
-            select p.*
-            from projects p
-            join tags t on t.project_id = p.id
-            where lower(t.name) in :tags
-            and p.deleted_at IS NULL
-            group by p.id
-            order by count(distinct lower(t.name)) desc
-            """,
+        select p.*
+        from projects p
+        left join tags t on t.project_id = p.id and lower(t.name) in :tags
+        left join stack_technologies s on s.project_id = p.id and lower(s.name) in :stack
+        where p.deleted_at IS NULL
+        group by p.id
+        order by (count(distinct lower(t.name)) + count(distinct lower(s.name))) desc
+        """,
             countQuery = """
-            select count(distinct p.id)
-            from projects p
-            join tags t on t.project_id = p.id
-            where lower(t.name) in :tags
-            and p.deleted_at IS NULL
-            """,
+        select count(distinct p.id)
+        from projects p
+        left join tags t on t.project_id = p.id and lower(t.name) in :tags
+        left join stack_technologies s on s.project_id = p.id and lower(s.name) in :stack
+        where p.deleted_at IS NULL
+        """,
             nativeQuery = true)
-    Page<ProjectEntity> findAllByTagsIgnoreCase(@Param("tags") Collection<String> tags,
-                                                Pageable pageable);
+    Page<ProjectEntity> findAllByTagsAndStacksIgnoreCase(@Param("tags") Collection<String> tags,
+                                                         @Param("stack") Collection<String> stack, Pageable pageable);
 }
